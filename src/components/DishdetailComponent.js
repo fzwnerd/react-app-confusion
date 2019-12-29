@@ -1,19 +1,9 @@
 import React, { Component } from 'react';
-import { Card, CardImg, CardImgOverlay, CardText, CardBody, CardTitle } from 'reactstrap';
-import { getByDisplayValue } from '@testing-library/react';
+import { Card, CardImg, CardImgOverlay, CardText, CardBody, CardTitle, Breadcrumb, BreadcrumbItem } from 'reactstrap';
+import { Link } from 'react-router-dom';
 
-class DishDetail extends Component {
 
-    constructor(props) {
-        super(props);
-        //console.log(this.props.selectedDish);
-
-        //this.state = {
-        //    dish: this.props.selectedDish
-        //};
-    }
-
-    renderDish(dish) {       
+    function RenderDish({dish}) {
         return (           
             <Card>
                 <CardImg top src={dish.image} alt={dish.alt} />
@@ -22,10 +12,11 @@ class DishDetail extends Component {
                     <CardText>{dish.description}</CardText>
                 </CardBody>
             </Card>
-        );        
+        );      
     }
+    
 
-    renderComments(comments) {
+    function RenderComments({comments}) {
         const dateOptions = { year: 'numeric', month: 'short', day: '2-digit' };
 
     // Then apply the format to your date. In this function, replace (txt.date) with your own dish.comments Obj.
@@ -35,7 +26,7 @@ class DishDetail extends Component {
             const formattedDate = (new Date(comm.date)).toLocaleDateString('en-US', dateOptions);
 
             return (
-                <li>
+                <li key={comm.id}>
                     <p>{comm.comment}</p>
                     <p>-- {comm.author}, {formattedDate}</p>
                 </li>
@@ -49,18 +40,35 @@ class DishDetail extends Component {
                     {listItems}
                 </ul>
             </div>
+            
         );
     }
 
-    render() {
-        if (this.props.selectedDish != null) {
+    const DishDetail = (props) => {
+        if (props.selectedDish != null) {
             return (
-                <div className="row">
-                    <div className="col-12 col-md-5 m-1">
-                        {this.renderDish(this.props.selectedDish)}
+                <div className="container">
+                    <div className="row">
+                        <Breadcrumb>
+                            <BreadcrumbItem>
+                                <Link to='/menu'>Menu</Link>
+                            </BreadcrumbItem>
+                            <BreadcrumbItem active>
+                                {props.selectedDish.name}
+                            </BreadcrumbItem>
+                        </Breadcrumb>
+                        <div className="col-12">
+                            <h3>{props.selectedDish.name}</h3>
+                            <hr />
+                        </div>                       
                     </div>
-                    <div className="col-12 col-md-5 m-1">
-                        {this.renderComments(this.props.selectedDish.comments)}
+                    <div className="row">
+                        <div className="col-12 col-md-5 m-1">
+                            <RenderDish dish={props.selectedDish} />
+                        </div>
+                        <div className="col-12 col-md-5 m-1">
+                            <RenderComments comments={props.comments} />
+                        </div>
                     </div>
                 </div>
             );
@@ -71,6 +79,6 @@ class DishDetail extends Component {
             );
         }
     }
-}
+
 
 export default DishDetail;
